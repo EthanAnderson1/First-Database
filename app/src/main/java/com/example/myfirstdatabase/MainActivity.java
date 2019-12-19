@@ -36,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
         user.put("sort code","12-34-56");
       /*  FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").add(user);*/
-        text = findViewById(R.id.lb);
+        //text = findViewById(R.id.lb);
       mDocRef.set(user);
       mDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
           @Override
           public void onSuccess(DocumentSnapshot documentSnapshot) {
               if (documentSnapshot.exists()){
                   String email = documentSnapshot.getString("email");
-                  text.setText(email);
+               //   text.setText(email);
               }
           }
       });
