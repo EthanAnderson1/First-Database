@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,37 +21,57 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private DocumentReference mDocRef = FirebaseFirestore.getInstance().document("sample/users");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final TextView text;
-
-        Map<String, Object> user = new HashMap<>();
-        user.put("email", "eth.and@gmail.com");
-        user.put("card holder's name", "ethan ando");
-        user.put("account number", "12345678");
-        user.put("sort code","12-34-56");
-      /*  FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users").add(user);*/
-        //text = findViewById(R.id.lb);
-      mDocRef.set(user);
-      mDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-          @Override
-          public void onSuccess(DocumentSnapshot documentSnapshot) {
-              if (documentSnapshot.exists()){
-                  String email = documentSnapshot.getString("email");
-               //   text.setText(email);
-              }
-          }
-      });
-
-
+        ArrayList<String> list = new ArrayList<String>();
+        Log.d("My Tag", "HELLO");
+        final EditText cardHoldersNametxt;
+        cardHoldersNametxt = findViewById(R.id.cardHoldersName);
+        final EditText accountNumbertxt;
+        accountNumbertxt = findViewById(R.id.accountNumber);
+        final EditText sortCodetxt;
+        sortCodetxt = findViewById(R.id.sortCode);
+        final Map<String, Object> user = new HashMap<>();
+        final Button submitbtn;
+        final TextView name1;
+        final TextView name2;
+        final TextView name3;
+        final TextView name4;
+        final TextView name5;
+        name1 = findViewById(R.id.name1);
+        name2 = findViewById(R.id.name2);
+        name3 = findViewById(R.id.name3);
+        name4 = findViewById(R.id.name4);
+        name5 = findViewById(R.id.name5);
+        submitbtn = findViewById(R.id.submitbtn);
+        submitbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DocumentReference mDocRef = FirebaseFirestore.getInstance().document("users/"+cardHoldersNametxt.getText().toString());
+                user.put("card holder's name", cardHoldersNametxt.getText().toString());
+                user.put("account number", accountNumbertxt.getText().toString());
+                user.put("sort code",sortCodetxt.getText().toString());
+                mDocRef.set(user);
+            }
+        });
+        CollectionReference mColRef = FirebaseFirestore.getInstance().collection("users");
+        mColRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> docs = task.getResult().getDocuments();
+                name1.setText("Card Holder - "+docs.get(0).get("card holder's name").toString() +"   Account Number - "+ docs.get(0).get("account number").toString()+"   Sort Code - "+docs.get(0).get("sort code").toString());
+                name2.setText("Card Holder - "+docs.get(1).get("card holder's name").toString() +"   Account Number - "+ docs.get(1).get("account number").toString()+"   Sort Code - "+docs.get(1).get("sort code").toString());
+            }
+        });
 
     }
 }
